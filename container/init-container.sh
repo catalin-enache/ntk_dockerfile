@@ -4,4 +4,6 @@
 
 service ssh start
 
+su app
+
 /bin/bash

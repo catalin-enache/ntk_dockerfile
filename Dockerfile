@@ -1,10 +1,6 @@
 
 FROM ubuntu:14.04
 
-ENV USER="app" \
-    RUBY="2.2" \
-    DEBIAN_FRONTEND="noninteractive"
-
 # for using apt-get
 RUN apt-get update -q
 # for using apt-add-repository
@@ -27,6 +23,10 @@ RUN apt-get install -y \
 RUN apt-get install -y gawk libreadline6-dev libyaml-dev libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
 
 
+ENV USER="app" \
+    RUBY="2.3.0" \
+    DEBIAN_FRONTEND="noninteractive"
+
 # ==================== create $USER ==================
 RUN adduser --disabled-password --gecos "" $USER && \
     adduser $USER sudo
@@ -39,8 +39,8 @@ RUN echo $USER:pass | chpasswd # let $USER have a password for allowing sudo
 
 
 # ==================== bashrc [DEV] ==================
-#ADD container/bashrc.txt /tmp/bashrc.txt
-#RUN cat /tmp/bashrc.txt >> /home/$USER/.bashrc
+ADD container/bashrc.txt /tmp/bashrc.txt
+RUN cat /tmp/bashrc.txt >> /home/$USER/.bashrc
 # ==================== END bashrc ==================
 
 
@@ -69,7 +69,7 @@ RUN gpg  --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 && \
     /bin/bash -l -c "rvm use $RUBY --default" && \
     /bin/bash -l -c "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc" && \
     /bin/bash -l -c "gem install bundler --no-ri --no-rdoc" && \
-    /bin/bash -l -c "echo 'export PATH="\$HOME/.rvm/bin:\$PATH" && source ~/.rvm/scripts/rvm' >> ~/.bashrc"
+    /bin/bash -l -c "echo 'source ~/.rvm/scripts/rvm' >> ~/.bashrc"
 # ==================== END rvm, ruby, bundler ==================
 
 
