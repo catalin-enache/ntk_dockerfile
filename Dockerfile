@@ -27,19 +27,21 @@ ENV USER="app" \
     RUBY="2.3.0" \
     DEBIAN_FRONTEND="noninteractive"
 
+
 # ==================== create $USER ==================
 RUN adduser --disabled-password --gecos "" $USER && \
-    adduser $USER sudo
+    adduser $USER sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 # ==================== END create $USER ==================
 
 
 # ==================== set user passwd for ssh [DEV] ==================
-RUN echo $USER:pass | chpasswd # let $USER have a password for allowing sudo
+# RUN echo $USER:pass | chpasswd # let $USER have a password ... ?
 # ==================== END set user passwd for ssh ==================
 
 
 # ==================== bashrc [DEV] ==================
-ADD container/bashrc.txt /tmp/bashrc.txt
+COPY container/bashrc.txt /tmp/bashrc.txt
 RUN cat /tmp/bashrc.txt >> /home/$USER/.bashrc
 # ==================== END bashrc ==================
 
@@ -57,8 +59,6 @@ EXPOSE 22
 # ==================== END openssh-server ==================
 
 
-
-
 # ==================== rvm, ruby, bundler ==================
 USER $USER
 RUN gpg  --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 && \
@@ -74,10 +74,13 @@ RUN gpg  --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 && \
 
 
 USER root
-ADD container/init-container.sh /usr/bin/init-container
+COPY container/init-container.sh /usr/bin/init-container
 RUN chmod +x /usr/bin/init-container
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-CMD ["/bin/bash", "/usr/bin/init-container"]
+ENTRYPOINT ["/usr/bin/init-container"]
+CMD ["/bin/bash"]
+
+USER $USER
 
 
 

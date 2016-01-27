@@ -3,7 +3,7 @@
 3. cat ~/.ssh/id_rsa.pub >> container/authorized_keys # authorized_keys is to be transfered into container
 4. [sudo] docker build -t ntkenv .
 5. [sudo] docker run --rm -ti -p 2222:22 ntkenv
-5. [sudo] docker run --rm -ti -p 2222:22 -v /path/to/project:/path/to/project ntkenv
+5. [sudo] docker run --rm -ti -p 2222:22 -v "$(pwd):$(pwd)" ntkenv
 6. ssh user@host -p 2222 || ssh user@192.168.99.100 -p 2222
 
 Rubymine remote ruby:

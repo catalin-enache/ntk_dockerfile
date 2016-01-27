@@ -1,9 +1,7 @@
 #!/bin/bash
 
-# source /etc/profile.d/rvm.sh
+sudo service ssh start
 
-service ssh start
+source ~/.rvm/scripts/rvm
 
-su app
-
-/bin/bash
+exec "$@"
