@@ -67,9 +67,9 @@ RUN gpg  --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 && \
     /bin/bash -l -c "rvm autolibs read-fail" && \
     /bin/bash -l -c "rvm install $RUBY" && \
     /bin/bash -l -c "rvm use $RUBY --default" && \
-    /bin/bash -l -c "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc" && \
+    echo 'gem: --no-ri --no-rdoc' > ~/.gemrc && \
     /bin/bash -l -c "gem install bundler --no-ri --no-rdoc" && \
-    /bin/bash -l -c "echo 'source ~/.rvm/scripts/rvm' >> ~/.bashrc"
+    echo 'source ~/.rvm/scripts/rvm' >> ~/.bashrc
 # ==================== END rvm, ruby, bundler ==================
 
 
