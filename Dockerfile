@@ -18,8 +18,10 @@ RUN apt-get install -y \
     python-dev \
     software-properties-common  \
     curl \
-    gnupg2
-# install NOW packages that will be reported later as missing by "rvm autolibs read-fail"
+    gnupg2 \
+    ruby2.3-dev
+# ruby2.3-dev is not required  by "rmv requirements" or "rvm autolibs read-fail" but actually we will need it.
+# Install NOW packages that will be reported later as missing by "rvm autolibs read-fail"
 RUN apt-get install -y gawk libreadline6-dev libyaml-dev libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
 
 
@@ -29,6 +31,7 @@ ENV USER="app" \
 
 
 # ==================== create $USER ==================
+# create user $USER and make it sudo. Also make sudo passwordless.
 RUN adduser --disabled-password --gecos "" $USER && \
     adduser $USER sudo && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -70,10 +73,12 @@ RUN gpg  --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 && \
     echo 'gem: --no-ri --no-rdoc' > ~/.gemrc && \
     /bin/bash -l -c "gem install bundler --no-ri --no-rdoc" && \
     echo 'source ~/.rvm/scripts/rvm' >> ~/.bashrc
+COPY container/default_gems.txt /home/$USER/default_gems.txt
 # ==================== END rvm, ruby, bundler ==================
 
 
 USER root
+EXPOSE 80 443 3000 8080 8000
 COPY container/init-container.sh /usr/bin/init-container
 RUN chmod +x /usr/bin/init-container
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

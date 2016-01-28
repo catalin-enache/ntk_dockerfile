@@ -6,12 +6,17 @@
 5. [sudo] docker run --rm -ti -p 2222:22 -v "$(pwd):$(pwd)" ntkenv
 6. ssh user@host -p 2222 || ssh user@192.168.99.100 -p 2222
 
-Rubymine remote ruby:
-           ruby path in remote machine: /home/user/.rvm/gems/ruby-2.3.0
-           When used first time, the debugger installs remotely some gems.
-           When container is closed those gems are lost.
-           It helps commiting the container to a new image and use that image for next sessions.
-           Though, when remote debugger fails after container restart:
+Rubymine 8.0.3 remote ruby:
+           ruby path in remote machine: /home/user/.rvm/gems/ruby-2.3.0 (use the default)
+           When used first time, the debugger auto installs remotely some gems (which requires rubyX.Y-dev),
+           Normally they're not found but we can (and we do) install them in advance.
+           For Rubymine 8.0.3 these are:
+                - debase (0.2.2.beta6)
+                - debase-ruby_core_source (0.8.4)
+                - ruby-debug-ide (0.6.0)
+           When container is closed those gems might get lost if installed by the IDE and we remove the container.
+           It helps committing the container to a new image and use that image for next sessions.
+           Though, when remote debugger fails after container restart we can fix this with:
                         File => Invalidate Caches / Restart - will reinstall remote debug gems into container
 
 
@@ -20,3 +25,5 @@ helpful commands:
              ssh-keygen -R [192.168.99.100]:2222 | ssh-keygen -f "/home/user/.ssh/known_hosts" -R [localhost]:2222
          To remove all containers:
              docker rm -v $(docker ps -a -q) | sudo docker rm -v $(sudo docker ps -a -q)
+         To remove all images:
+             docker rmi $(docker images -q) | sudo docker rmi $(sudo docker images -q)

@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+# gems: debase debase-ruby_core_source ruby-debug-ide are required by IDEs debugger engine
+gem 'debase-ruby_core_source'
+gem 'debase'
+gem 'ruby-debug-ide'
