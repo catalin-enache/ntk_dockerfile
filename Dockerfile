@@ -94,7 +94,7 @@ RUN /bin/bash -l -c "git clone https://github.com/creationix/nvm.git ~/.nvm && c
 # ==================== END nvm, nodejs ==================
 
 
-# ==================== python ==========================
+# ==================== python (virtualenv) ==========================
 USER root
 RUN apt-get install -y python$PYTHON2 python$PYTHON3 python$PYTHON2-dev python$PYTHON3-dev \
     && curl -sSL https://bootstrap.pypa.io/get-pip.py | python \
@@ -105,9 +105,10 @@ USER $USER
 RUN mkdir /home/$USER/python$PYTHON2 /home/$USER/python$PYTHON3 \
     && virtualenv -p /usr/bin/python$PYTHON2 /home/$USER/python2 \
     && virtualenv -p /usr/bin/python$PYTHON3 /home/$USER/python3 \
+    && echo "source ~/python2/bin/activate" >> ~/.bashrc \
     && echo "alias 'py2=source ~/python2/bin/activate'" >> ~/.bashrc \
-    && echo "alias 'py3=source ~/python3/bin/activate'" >> ~/.bashrc \
-    && echo "source ~/python3/bin/activate" >> ~/.bashrc
+    && echo "alias 'py3=source ~/python3/bin/activate'" >> ~/.bashrc
+
 # ==================== END python ======================
 
 USER root
