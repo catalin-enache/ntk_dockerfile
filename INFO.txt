@@ -4,12 +4,14 @@
 4. [sudo] docker build -t ntkenv .
 5. [sudo] docker run --rm -ti -p 2222:22 ntkenv
 5. [sudo] docker run --rm -ti -p 2222:22 -v "$(pwd):$(pwd)" ntkenv
+5. [sudo] docker run --rm -ti -p 2222:22 -p 1234:1234 -p 26162:26162  -v "$(pwd):$(pwd)" ntkenv # (for ruby debugger session)
 6. ssh user@host -p 2222 || ssh user@192.168.99.100 -p 2222
 
 Rubymine 8.0.3 remote ruby:
+           ----- ssh
            ruby path in remote machine: /home/user/.rvm/gems/ruby-2.3.0 (use the default)
            When used first time, the debugger auto installs remotely some gems (which requires rubyX.Y-dev),
-           Normally they're not found but we can (and we do) install them in advance.
+           Normally they're not found but we can (and we should) install them in advance.
            For Rubymine 8.0.3 these are:
                 - debase (0.2.2.beta6)
                 - debase-ruby_core_source (0.8.4)
@@ -18,6 +20,14 @@ Rubymine 8.0.3 remote ruby:
            It helps committing the container to a new image and use that image for next sessions.
            Though, when remote debugger fails after container restart we can fix this with:
                         File => Invalidate Caches / Restart - will reinstall remote debug gems into container
+           debugging via ssh on mac + docker was unsuccessful due to ports not being known in advance in order to be exposed from container to the host
+           ----- remote ruby debugger (well known port and script)
+           this was possible on mac as ports are known in advance
+           start container: docker run --rm -ti -p 2222:22 -p 1234:1234 -p 26162:26162  -v "$(pwd):$(pwd)" ntkenv (exposing rdebug-ide ports)
+           inside container run: rdebug-ide --host 0.0.0.0 --port 1234 --dispatcher-port 26162 -- /path/to/script.rb
+           (ideally the script should serve forever | the command must be executed for every new debug)
+           NOTE: debase debase-ruby_core_source ruby-debug-ide gems are required by IDEs debugger engine. They must be installed in advance.
+
 
 
 helpful commands:
